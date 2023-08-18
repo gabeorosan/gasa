@@ -20,6 +20,9 @@ function nextQuestion() {
   }
   var sentence = lyrics[currentSentence];
   var sentenceWords = sentence.split(" ");
+  //remove punctuation
+  sentenceWords = sentenceWords.map(word => word.replace(/[.,!?;:]/g, ''));
+
   var blankIndex = Math.floor(Math.random() * sentenceWords.length);
   var blankWord = sentenceWords[blankIndex];
   sentenceWords[blankIndex] = "_____";
@@ -74,7 +77,8 @@ function checkAnswer(selected, correct, optionDiv) {
         var corr = document.getElementById("correct").innerHTML
   
         // Replace the blank with the correct answer in green
-        sentenceElement.innerHTML = sentenceElement.innerText.replace("_____", "<span style='color:green'>" + corr + "</span>");
+        sentenceElement.innerHTML = lyrics[currentSentence]
+        sentenceElement.innerHTML = sentenceElement.innerText.replace(corr, "<span style='color:green'>" + corr + "</span>");
 
       // Disable all options
       var optionsDiv = document.getElementById("options");
