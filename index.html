@@ -5,18 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Korean Vocabulary Game</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://www.youtube.com/iframe_api"></script>
+
 </head>
 <body>
         <div id="playScreen">
             <h1 id="title"></h1>
-            <p id="progress">Progress: </p>
-            <p id="sentence">_____</p>
+            
+            <p id="sentence"></p>
             <div id="options">
                 <!-- Options will be populated here -->
             </div>
-            <button onclick="nextQuestion()">Next</button>
+            <button id="backButton" onclick="previousQuestion()">&larr;</button>
+            <span id="progress"></span>
+            <button id="nextButton" onclick="nextQuestion()">&rarr;</button>
+            
             <button onclick="newSong()">New song</button>
         </div>
+
+        <div id="player"></div>
 
     <script src="script.js"></script>
 </body>
