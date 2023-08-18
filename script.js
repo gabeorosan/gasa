@@ -1,6 +1,6 @@
 n_songs = 168;
 
-var apiKey
+var apiKey = "AIzaSyA1TBlg96OMN6k5trM6Ks3gFsH0yjxfvdk"
 
 var n = Math.floor(Math.random() * n_songs);
 var lyricsFile = 'lyrics/' + n + '.json';
@@ -143,12 +143,6 @@ function playVideo(videoId) {
 
 function onYouTubeIframeAPIReady() {
   
-
-  fetch('tokens.json')
-    .then((response) => response.json())
-    .then((data) => {
-      apiKey = data.apiKey;
-    })
 
     fetch(lyricsFile)
     .then((response) => response.json())
