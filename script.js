@@ -1,9 +1,7 @@
 n_songs = 168;
 
-var apiKey = "AIzaSyA1TBlg96OMN6k5trM6Ks3gFsH0yjxfvdk"
-
-var n = Math.floor(Math.random() * n_songs);
-var lyricsFile = 'lyrics/' + n + '.json';
+var n;
+var lyricsFile;
 var lyrics, currentSentence, words
 var sentenceElement = document.getElementById("sentence");
 
@@ -101,6 +99,23 @@ function checkAnswer(selected, correct, optionDiv) {
     words = Array.from(uniqueWords);
   }
 
+var player;
+
+function onYouTubeIframeAPIReady() {
+
+  player = new YT.Player('player', {
+    height: '440',
+    width: '800',
+    events: {
+      'onReady': onPlayerReady
+    }
+  });
+}
+
+function onPlayerReady() {
+  newSong()
+}
+
 function newSong() {
   n = Math.floor(Math.random() * n_songs);
   lyricsFile = 'lyrics/' + n + '.json';
@@ -109,7 +124,11 @@ function newSong() {
   .then((data) => {
     lyrics = data.lyrics;
     title = data.title;
-    searchYouTube(title);
+    videoId = data.video_id;
+
+    
+    player.loadVideoById(videoId);
+
     document.getElementById("title").innerText = title;
     currentSentence = -1;
     createWords();
@@ -118,48 +137,7 @@ function newSong() {
 }
 
 
-function searchYouTube(title) {
-  var url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${title}&type=video&key=${apiKey}`;  
-  fetch(url)
-    .then((response) => response.json())
-    .then((data) => {
-      var videoId = data.items[0].id.videoId;
-      playVideo(videoId);
-    });
-}
 
-
-
-var player;
-
-function playVideo(videoId) {
-  if (!player) {
-    player = new YT.Player('player', {
-      height: '360',
-      width: '640',
-      videoId: videoId,
-    });
-  } else {
-    player.loadVideoById(videoId);
-  }
-}
-
-
-function onYouTubeIframeAPIReady() {
-  
-
-    fetch(lyricsFile)
-    .then((response) => response.json())
-    .then((data) => {
-      lyrics = data.lyrics;
-      title = data.title;
-      searchYouTube(title);
-      document.getElementById("title").innerText = title;
-      currentSentence = -1;
-      createWords();
-      nextQuestion();
-    });
-}
 
 
 
