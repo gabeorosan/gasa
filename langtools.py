@@ -101,7 +101,7 @@ def txt_json(folder_path, title_ids):
                     if len(l) > 0:
                         l = ' '.join(jieba.cut(l))
                         l = corr_punc(l)
-                        if '[' not in l:
+                        if '[' not in l and ']' not in l:
                             lyrics.append(l)
                             p = to_pinyin(l)
                             lyrics.append(p)
