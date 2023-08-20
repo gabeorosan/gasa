@@ -48,7 +48,7 @@ function nextQuestion() {
     if (option === blankWord) { optionDiv.id = "correct"; }
     optionDiv.className = "option";
     optionDiv.innerText = option;
-    optionDiv.onclick = function () { checkAnswer(option, blankWord, optionDiv); };
+    optionDiv.onclick = function () { checkAnswer(option, blankWord, blankIndex, optionDiv); };
     optionsDiv.appendChild(optionDiv);
   });
 
@@ -63,7 +63,7 @@ function previousQuestion() {
 
 
 
-function checkAnswer(selected, correct, optionDiv) {
+function checkAnswer(selected, correct, corrIndex, optionDiv) {
 
     if (selected === correct) {
         optionDiv.style.backgroundColor = "#44b445";
@@ -75,8 +75,10 @@ function checkAnswer(selected, correct, optionDiv) {
         var corr = document.getElementById("correct").innerHTML
   
         // Replace the blank with the correct answer in green
-        sentenceElement.innerHTML = lyrics[currentSentence]
-        sentenceElement.innerHTML = sentenceElement.innerText.replace(corr, "<span style='color:green'>" + corr + "</span>");
+        sentence = lyrics[currentSentence]
+        sentenceList = sentence.split(" ")
+        sentenceList[corrIndex] = "<span style='color:green'>" + corr + "</span>";
+        sentenceElement.innerHTML = sentenceList.join(" ")
 
       // Disable all options
       var optionsDiv = document.getElementById("options");
