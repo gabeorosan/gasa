@@ -19,7 +19,7 @@ function nextQuestion() {
   var sentence = lyrics[currentSentence];
   var sentenceWords = sentence.split(" ");
   //remove punctuation
-  sentenceWords = sentenceWords.map(word => word.replace(/[.,!?;:]/g, ''));
+  sentenceWords = sentenceWords.map(word => word.replace(/[.,!?;:-]/g, ''));
 
   var blankIndex = Math.floor(Math.random() * sentenceWords.length);
   var blankWord = sentenceWords[blankIndex];
@@ -92,7 +92,7 @@ function checkAnswer(selected, correct, corrIndex, optionDiv) {
     var lyricsText = lyrics.join(' ');
 
     // Split the lyrics text into words, removing any punctuation
-    var allWords = lyricsText.replace(/[.,!?;:]/g, '').split(/\s+/);
+    var allWords = lyricsText.replace(/[.,!?;:-]/g, '').split(/\s+/);
   
     // Create a Set to store unique words
     var uniqueWords = new Set(allWords);
