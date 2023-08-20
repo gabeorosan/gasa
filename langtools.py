@@ -5,6 +5,9 @@ def corr_punc(text):
     import jieba
     # Mapping of Korean punctuation to English equivalents
     conversion_mapping = {
+        '。': '.', '，': ',', '！': '!', '？': '?', '“': '"', '”': '"',
+        '‘': "'", '’': "'", '：': ':', '；': ';', '（': '(', '）': ')',
+        '《': '<', '》': '>', '【': '[', '】': ']', '—': '-', '…': '...',
         '\u2026': '...', # Horizontal ellipsis
         '\u3001': ',',  # Ideographic comma
         '\u3002': '.',  # Ideographic full stop
