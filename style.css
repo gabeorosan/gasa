@@ -10,6 +10,19 @@ button {
     cursor: pointer;
 }
 
+.navbar {
+    background-color: #f0f0f0;
+    padding: 15px;
+}
+.navbar a {
+    text-decoration: none;
+    color: #333;
+    margin-right: 10px;
+}
+.navbar a:hover {
+    text-decoration: underline;
+}
+
 input[type="text"] {
     padding: 10px;
     margin: 10px;

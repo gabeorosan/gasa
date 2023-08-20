@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Korean Vocabulary Game</title>
+    <link rel="icon" href="favicon.ico">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://www.youtube.com/iframe_api"></script>
+
+</head>
+<body>
+    <div class="navbar">
+        <a href="index.html">Korean</a>
+        <a href="chinese.html">Chinese</a>
+        <a href="laoshi.html">Laoshi</a>
+    </div>
+        <div id="playScreen">
+            <h1 id="title"></h1>
+            <p id="sentence"></p>
+            <p id="pinyin"></p>
+            <div id="options">
+                <!-- Options will be populated here -->
+            </div>
+            <button id="backButton" onclick="previousQuestion()">&larr;</button>
+            <span id="progress"></span>
+            <button id="nextButton" onclick="nextQuestion()">&rarr;</button>
+            
+            <button onclick="newSong()">New video</button>
+        </div>
+        <div id="player"></div>
+
+    <script src="chinese.js"></script>
+</body>
+</html>

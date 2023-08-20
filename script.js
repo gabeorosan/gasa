@@ -92,7 +92,7 @@ function checkAnswer(selected, correct, corrIndex, optionDiv) {
     var lyricsText = lyrics.join(' ');
 
     // Split the lyrics text into words, removing any punctuation
-    var allWords = lyricsText.replace(/[.,!?;:-]/g, '').split(/\s+/);
+    var allWords = lyricsText.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '').split(/\s+/);
   
     // Create a Set to store unique words
     var uniqueWords = new Set(allWords);
@@ -106,7 +106,7 @@ var player;
 function onYouTubeIframeAPIReady() {
 
   player = new YT.Player('player', {
-    height: '360',
+    height: '300',
     width: '640',
     events: {
       'onReady': onPlayerReady
