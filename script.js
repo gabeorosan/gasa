@@ -45,7 +45,9 @@ document.getElementById('title').addEventListener('click', function() {
 */
 function removePunctuation(str) {
   // Regular expression matching Japanese punctuation characters
-  return str.replace(/[!-\/:-@\[-`{-~\u3000-\u303F\uFF00-\uFFEF\u2010\u2013\u2014\u2026\u30FB\u30FC\u3001\u3002、]/g, '');
+  const regex = /[.,\/#!$?%\^&\*;:{}="'\-_`~()「」!-\/:-@\\"'[\]-`{-~\u3000-\u303F\uFF00-\uFFEF\u2010\u2013\u2014\u2026\u30FB\u30FC\u3001\u3002、]/g;
+
+  return str.replace(regex, '');
 }
 
 function nextQuestion() {
@@ -143,7 +145,7 @@ function checkAnswer(selected, correct, corrIndex, optionDiv) {
     var lyricsText = lyrics.join(' ');
 
     // Split the lyrics text into words, removing any punctuation
-    var allWords = lyricsText.replace(/[.,\/#!$?%\^&\*;:{}="'\-_`~()「」]/g, '').split(/\s+/);
+    var allWords = removePunctuation(lyricsText).split(/\s+/);
   
     // Create a Set to store unique words
     var uniqueWords = new Set(allWords);
