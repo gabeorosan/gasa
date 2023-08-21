@@ -127,7 +127,7 @@ def jp_txt_json(folder_path, title_ids):
 def segment_jp(text):
     import requests
     import json
-    from parsing.tokens import app_id
+    from tokens import app_id
     url = "https://labs.goo.ne.jp/api/morph"
     headers = {"Content-Type": "application/json"}
     payload = {
@@ -143,7 +143,7 @@ def segment_jp(text):
 def generate_furigana(text):
     import requests
     import json
-    from parsing.tokens import app_id
+    from tokens import app_id
     url = "https://labs.goo.ne.jp/api/hiragana"
     headers = {"Content-Type": "application/json"}
     payload = {
@@ -189,6 +189,66 @@ def seg_gen(text):
     result = ' '.join(tokenize_japanese_text(text))
     return result
     
+
+def ko_txt_json(folder_path, title_ids):
+    import re
+    import os
+    import regex
+    import json
+    i = 0
+    missing_ids = []
+    for filename in os.listdir(folder_path):
+        file_path = os.path.join(folder_path, filename)
+        if os.path.isfile(file_path) and file_path.endswith(".txt"):
+            # open the file and read it
+            with open(file_path, 'r', encoding='utf-8') as f:
+                text = f.read()
+                text = corr_punc(text)
+            lines = text.split("\n")
+            lyrics = '\n'.join(lines[1:])
+            title = corr_punc(lines[0])
+            # remove english from the last line
+            lyrics = lyrics.split('\n')
+            lyrics[0] = regex.split(r'[a-zA-Z]+|[ぁ-んァ-ン一-龥]|\p{P}', lyrics[0])[-1]
+            lyrics[-1] = regex.split(r'[a-zA-Z]+|[ぁ-んァ-ン一-龥]|\p{P}', lyrics[-1])[0]
+            korean_lyrics = '\n'.join(lyrics)
+            korean_lyrics = korean_lyrics.strip().replace('\n\n', '\n')
+            
+            newlines = []
+            for line in lyrics:
+                if re.search(r'[a-zA-Z\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF]', line):
+                    if not re.search(r'[a-zA-Z\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF]', regex.split(r'[a-zA-Z]+|[ぁ-んァ-ン一-龥]|\p{P}', line)[-1]):
+                        newlines.append(regex.split(r'[a-zA-Z]+|[ぁ-んァ-ン一-龥]|\p{P}', line)[-1])
+                    elif not re.search(r'[a-zA-Z\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF]', regex.split(r'[a-zA-Z]+|[ぁ-んァ-ン一-龥]|\p{P}', line)[0]):
+                        newlines.append(regex.split(r'[a-zA-Z]+|[ぁ-んァ-ン一-龥]|\p{P}', line)[0])
+                    else: newlines.append('')
+                else:
+                    newlines.append(line)
+                    
+            korean_lyrics = '\n'.join(line.strip() for line in newlines if not re.search(r'[a-zA-Z\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF]', line))
+            korean_lyrics = '\n'.join(line.strip() for line in korean_lyrics.split('\n') if len(line.split()) > 1 or len(line) > 1)
+            if len(korean_lyrics.split('\n')) > len(lines) * .6: 
+                if title in title_ids:
+                    id = title_ids[title]
+                else: id = None
+                if id == None:
+                    missing_ids.append(title)
+                json_data = {
+                    "title": title,
+                    "lyrics": korean_lyrics.split('\n'),
+                    "video_id": id
+                }
+
+                # Write the JSON object to a JSON file
+                json_file_path = os.path.join(folder_path, f"{i}.json")
+                with open(json_file_path, 'w', encoding='utf-8') as json_file:
+                    json.dump(json_data, json_file, ensure_ascii=False, indent=2)
+                
+            i += 1
+    print("Missing ids: " + str(missing_ids))
+    print("Total videos: " + str(i))
+    return missing_ids
+
 
 def txt_json(folder_path, title_ids):
     import re
@@ -260,9 +320,9 @@ def update_missing(title_ids, missing_ids):
     from googleapiclient.discovery import build
     import json
     import os
-    from parsing.tokens import api_key1, api_key2, api_key3
+    from tokens import api_key1, api_key2, api_key3, api_key4
     i = 0
-    youtube = build("youtube", "v3", developerKey=api_key1)
+    youtube = build("youtube", "v3", developerKey=api_key4)
 
     for id in missing_ids:
         i+=1
@@ -292,7 +352,7 @@ def generate_txt(artists, folder_path):
     cnt = 0
     from lyricsgenius import Genius
     import re
-    from parsing.tokens import token
+    from tokens import token
     genius = Genius(token)
     for a in artists:
         res = genius.search_artist(a)
