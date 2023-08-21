@@ -13,7 +13,7 @@ const katakanaToHiragana = (str) => {
 };
 
 const processLyrics = (lyrics, callback) => {
-  const dicPath = "bower_components/kuromoji/dict";
+  const dicPath = "/bower_components/kuromoji/dict";
   const tokenizedLines = [];
   const furiganaLines = [];
 
@@ -49,7 +49,7 @@ const processLyrics = (lyrics, callback) => {
 
 
 const tokenizeAndFurigana = (text, callback) => {
-    const dicPath = "bower_components/kuromoji/dict";
+    const dicPath = "bower_components/kuromoji/dict/";
   
     kuromoji.builder({ dicPath: dicPath }).build((err, tokenizer) => {
       if (err) {
