@@ -10,13 +10,25 @@ const config = {
   lang: 'jp' // Default language
 };
 
+function setPlayerHeight(newHeight) {
+  const iframe = player.getIframe();
+  iframe.style.height = newHeight + 'px';
+}
+
 function changeLanguage(langCode) {
   config.lang = langCode;
-  player.height: langCode == 'ko' ? '360' : '300'
   console.log(`Language changed to ${langCode}`);
   pinyinElement.style.display = config.lang === 'ko' ? 'none' : 'block';
   newSong();
+  if (langCode === 'ko') {
+    document.body.style.fontSize = '30px';
+    setPlayerHeight(360);
+  } else {
+    document.body.style.fontSize = '24px';
+    setPlayerHeight(310);
+  }
 }
+
 // Attach click event listeners to the buttons
 document.querySelectorAll('nav button').forEach(button => {
   button.addEventListener('click', (event) => {
@@ -145,7 +157,7 @@ var player;
 function onYouTubeIframeAPIReady() {
 
   player = new YT.Player('player', {
-    height: '300',
+    height: '310',
     width: '640',
     events: {
       'onReady': onPlayerReady

@@ -5,7 +5,7 @@ body {
 }
 
 button {
-    padding: 10px 20px;
+    padding: 5px 20px;
     margin: 10px;
     cursor: pointer;
 }
@@ -13,14 +13,13 @@ button {
     background-color: #f0f0f0;
     padding: 0px;
 }
-.navbar a {
-    text-decoration: none;
-    color: #333;
+.navbar button {
+    font-size: 24px;
+    margin: 5px;
 }
 .navbar a:hover {
     text-decoration: underline;
 }
-
 p {
     margin: 20px;
 }
