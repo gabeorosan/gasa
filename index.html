@@ -7,18 +7,15 @@
     <link rel="icon" href="favicon.ico">
     <link rel="stylesheet" href="style.css">
     <script src="https://www.youtube.com/iframe_api"></script>
-    <script src="/bower_components/kuromoji/build/kuromoji.js"></script>
-
 </head>
 <body>
-    <div class="navbar">
-        <a href="index.html">Korean</a>
-        <a href="chinese.html">Chinese</a>
-        <a href="japanese.html">Japanese</a>
-    </div>
+    <nav class="navbar">
+        <button data-lang="ko">Korean</button>
+        <button data-lang="jp">Japanese</button>
+        <button data-lang="zh">Chinese</button>
+    </nav>
         <div id="playScreen">
-            <h1 id="title"></h1>
-            
+            <p id="pinyin"></p>
             <p id="sentence"></p>
             <div id="options">
                 <!-- Options will be populated here -->
@@ -27,10 +24,11 @@
             <span id="progress"></span>
             <button id="nextButton" onclick="nextQuestion()">&rarr;</button>
             
-            <button onclick="newSong()">New song</button>
+            <button onclick="newSong()">New video</button>
         </div>
         <div id="player"></div>
-
+          
     <script src="script.js"></script>
+      
 </body>
 </html>

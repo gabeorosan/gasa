@@ -161,3 +161,4 @@ cython_debug/
 tokens.*
 .*
 */.*
+parsing/node_modules

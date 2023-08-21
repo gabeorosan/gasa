@@ -1,6 +1,6 @@
 body {
     font-family: Arial, sans-serif;
-    font-size: 20px;
+    font-size: 24px;
     text-align: center;
 }
 
@@ -9,29 +9,29 @@ button {
     margin: 10px;
     cursor: pointer;
 }
-
 .navbar {
     background-color: #f0f0f0;
-    padding: 10px;
+    padding: 0px;
 }
 .navbar a {
     text-decoration: none;
     color: #333;
-    margin-right: 10px;
 }
 .navbar a:hover {
     text-decoration: underline;
 }
 
+p {
+    margin: 20px;
+}
 input[type="text"] {
     padding: 10px;
     margin: 10px;
 }
-
 #title {
     color: blue;
     text-decoration: underline;
-    cursor: pointer;
+    cursor: pointer;    
 }
   
 #player {
@@ -46,13 +46,12 @@ input[type="text"] {
 
 button {
     padding: 10px 20px;
-    margin: 10px;
     cursor: pointer;
 }
 
 .option {
     padding: 10px;
-    margin: 10px;
+    margin: 0px 10px 10px;
     border: 1px solid #ccc;
     cursor: pointer;
 }

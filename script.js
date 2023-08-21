@@ -1,14 +1,39 @@
-n_songs = 223;
-
+var n_songs;  
 var n;
 var lyricsFile;
 var lyrics, currentSentence, words
-var sentenceElement = document.getElementById("sentence");
+const sentenceElement = document.getElementById("sentence");
+const pinyinElement = document.getElementById("pinyin");
+const playScreen = document.getElementById("playScreen");
 
+const config = {
+  lang: 'jp' // Default language
+};
+
+function changeLanguage(langCode) {
+  config.lang = langCode;
+  console.log(`Language changed to ${langCode}`);
+  pinyinElement.style.display = config.lang === 'ko' ? 'none' : 'block';
+  newSong();
+}
+// Attach click event listeners to the buttons
+document.querySelectorAll('nav button').forEach(button => {
+  button.addEventListener('click', (event) => {
+    const langCode = event.target.getAttribute('data-lang');
+    changeLanguage(langCode);
+  });
+});
+
+/*
 document.getElementById('title').addEventListener('click', function() {
   var url = "https://www.google.com/search?q=" + encodeURIComponent(this.innerText + ' lyrics');
   window.open(url, '_blank');
 });
+*/
+function removePunctuation(str) {
+  // Regular expression matching Japanese punctuation characters
+  return str.replace(/[!-\/:-@\[-`{-~\u3000-\u303F\uFF00-\uFFEF\u2010\u2013\u2014\u2026\u30FB\u30FC\u3001\u3002、]/g, '');
+}
 
 function nextQuestion() {
   if (currentSentence >= lyrics.length - 1) {
@@ -29,7 +54,14 @@ function nextQuestion() {
   // set the innerText of the sentence element to the new sentence
   sentenceElement.innerText = sentence;
   
-
+  if (config.lang !== 'ko') {
+    pinyinLine = pinyin[currentSentence];
+    pinWords = pinyinLine.split(" ");
+    pinyinWords = pinWords.map(word => removePunctuation(word));
+    pinyinWords[blankIndex] = "_____";
+    pinyinLine = pinyinWords.join(" ");
+    pinyinElement.innerText = pinyinLine;
+  }
   var wordsCopy = words.slice();
   
   // Create options
@@ -80,6 +112,12 @@ function checkAnswer(selected, correct, corrIndex, optionDiv) {
         sentenceList[corrIndex] = "<span style='color:green'>" + corr + "</span>";
         sentenceElement.innerHTML = sentenceList.join(" ")
 
+        if (config.lang !== 'ko') {
+          pinyinLine = pinyin[currentSentence]
+          pinyinList = pinyinLine.split(" ")
+          pinyinList[corrIndex] = "<span style='color:green'>" + pinyinList[corrIndex] + "</span>";
+          pinyinElement.innerHTML = pinyinList.join(" ")
+        }
       // Disable all options
       var optionsDiv = document.getElementById("options");
       for (var i = 0; i < optionsDiv.children.length; i++) {
@@ -106,7 +144,7 @@ var player;
 function onYouTubeIframeAPIReady() {
 
   player = new YT.Player('player', {
-    height: '360',
+    height: config.lang == 'ko' ? '340' : '300',
     width: '640',
     events: {
       'onReady': onPlayerReady
@@ -119,19 +157,25 @@ function onPlayerReady() {
 }
 
 function newSong() {
+  n_songs = config.lang == 'zh' ? 16 : 220, 
   n = Math.floor(Math.random() * n_songs);
-  lyricsFile = 'lyrics/' + n + '.json';
+  lyricsFile = 'lyrics/' + config.lang + '/' +  n + '.json';
   fetch(lyricsFile)
   .then((response) => response.json())
   .then((data) => {
-    lyrics = data.lyrics;
-    title = data.title;
-    videoId = data.video_id;
-
+    if (config.lang == 'ko') {
+      lyrics = data.lyrics;
+    } else {
+      lyrics = data.lyrics.filter((_, index) => index % 2 === 0);
+      pinyin = data.lyrics.filter((_, index) => index % 2 === 1);
+    }
     
+    videoId = data.video_id;
     player.loadVideoById(videoId);
-
+    /*
+    title = data.title;
     document.getElementById("title").innerText = title;
+    */
     currentSentence = -1;
     createWords();
     nextQuestion();
