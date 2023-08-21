@@ -12,6 +12,7 @@ const config = {
 
 function changeLanguage(langCode) {
   config.lang = langCode;
+  player.height: langCode == 'ko' ? '360' : '300'
   console.log(`Language changed to ${langCode}`);
   pinyinElement.style.display = config.lang === 'ko' ? 'none' : 'block';
   newSong();
@@ -144,7 +145,7 @@ var player;
 function onYouTubeIframeAPIReady() {
 
   player = new YT.Player('player', {
-    height: config.lang == 'ko' ? '340' : '300',
+    height: '300',
     width: '640',
     events: {
       'onReady': onPlayerReady
