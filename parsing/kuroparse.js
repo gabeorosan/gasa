@@ -13,7 +13,7 @@ kuromoji.builder({ dicPath: 'node_modules/kuromoji/dict' }).build((err, tokenize
 
   // Iterate through the JSON files
   for (let i = 0; i <= n_songs - 1; i++) {
-    const path = `jp/${i}.json`;
+    const path = `../lyrics/jp/${i}.json`;
 
     fs.readFile(path, 'utf8', (err, data) => {
       if (err) throw err;

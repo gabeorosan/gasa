@@ -131,7 +131,7 @@ function checkAnswer(selected, correct, corrIndex, optionDiv) {
     var lyricsText = lyrics.join(' ');
 
     // Split the lyrics text into words, removing any punctuation
-    var allWords = lyricsText.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '').split(/\s+/);
+    var allWords = lyricsText.replace(/[.,\/#!$?%\^&\*;:{}=\-_`~()「」]/g, '').split(/\s+/);
   
     // Create a Set to store unique words
     var uniqueWords = new Set(allWords);
@@ -158,7 +158,7 @@ function onPlayerReady() {
 }
 
 function newSong() {
-  n_songs = config.lang == 'zh' ? 16 : 220, 
+  n_songs = config.lang == 'zh' ? 16 : 218, 
   n = Math.floor(Math.random() * n_songs);
   lyricsFile = 'lyrics/' + config.lang + '/' +  n + '.json';
   fetch(lyricsFile)
