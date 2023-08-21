@@ -25,7 +25,7 @@ function changeLanguage(langCode) {
     setPlayerHeight(360);
   } else {
     document.body.style.fontSize = '24px';
-    setPlayerHeight(310);
+    setPlayerHeight(320);
   }
 }
 
@@ -143,7 +143,7 @@ function checkAnswer(selected, correct, corrIndex, optionDiv) {
     var lyricsText = lyrics.join(' ');
 
     // Split the lyrics text into words, removing any punctuation
-    var allWords = lyricsText.replace(/[.,\/#!$?%\^&\*;:{}=\-_`~()「」]/g, '').split(/\s+/);
+    var allWords = lyricsText.replace(/[.,\/#!$?%\^&\*;:{}="'\-_`~()「」]/g, '').split(/\s+/);
   
     // Create a Set to store unique words
     var uniqueWords = new Set(allWords);
@@ -157,7 +157,7 @@ var player;
 function onYouTubeIframeAPIReady() {
 
   player = new YT.Player('player', {
-    height: '310',
+    height: '320',
     width: '640',
     events: {
       'onReady': onPlayerReady
