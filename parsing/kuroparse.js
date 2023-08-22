@@ -31,7 +31,6 @@ kuromoji.builder({ dicPath: 'node_modules/kuromoji/dict' }).build((err, tokenize
 
           // Extract the surface forms and readings, spaced
           const surfaceForms = tokens.map(token => token.surface_form).join(' ');
-          const readings = tokens.map(token => token.reading || token.surface_form).join(' ');
 
           const normalizedSurfaceForms = normalizeSpaces(surfaceForms).replace(/\s+/g, ' ').trim();
 
@@ -40,7 +39,7 @@ kuromoji.builder({ dicPath: 'node_modules/kuromoji/dict' }).build((err, tokenize
         }
 
         // Update the JSON data and save back to the file
-        jsonData.lyrics = processedLyrics;
+        jsonData.words = processedLyrics;
         fs.writeFile(path, JSON.stringify(jsonData, null, 2), (err) => {
           if (err) throw err;
           console.log(`File ${path} has been processed and saved.`);
