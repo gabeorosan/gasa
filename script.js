@@ -16,7 +16,6 @@ function setPlayerHeight(newHeight) {
 
 function changeLanguage(langCode) {
   config.lang = langCode;
-  console.log(`Language changed to ${langCode}`);
   newSong();
 }
 
@@ -37,10 +36,8 @@ document.getElementById('title').addEventListener('click', function() {
 */
 function replaceIthOccurrence(str, oldSubstring, i, newSubstring) {
   // print out the string, the substring to replace, the index of the occurrence to replace, and the new substring
-  console.log(str, oldSubstring, i, newSubstring)
   let occurrenceCount = 0;
   let index = 0;
-  console.log(str, oldSubstring, i, newSubstring)
   while ((index = str.indexOf(oldSubstring, index)) !== -1) {
     if (occurrenceCount === i) {
       return str.substring(0, index) + newSubstring + str.substring(index + oldSubstring.length);
@@ -71,7 +68,7 @@ function replaceRandomOccurrence(str, substring, replacement = '___') {
 }
 
 function replaceSentencePunctuation(str, replacement) {
-  const regex = /[.,\/#!$?%\^&\*;:{}="'\-\u201C\u201D_`~()\s\u3000「」！？！!-\/:-@\\"'[\]-`{-~\u2010\u2013\u2014\u2026\uFF01-\uFF60\uFF61-\uFF65。〃〈〉《》「」『』【】〔〕〖〗〘〙〚〛〜〝〞〟]/g;
+  const regex = /["'(){}[\]「」『』【】〔〕〈〉《》〖〗〘〙〚〛\u201C\u201D〝〞〃]/g;
   return str.replace(regex, replacement);
 }
 
@@ -90,15 +87,16 @@ function nextQuestion() {
 
   var sentence = lyrics[currentSentence];
   var sentenceLine = config.lang == 'ko' ? sentence : wordLines[currentSentence];
-  var sentenceWords = replacePunctuation(sentenceLine, ' ').split(/\s+/)
+  var sentenceWords = replacePunctuation(sentenceLine, ' ').split(/\s+/).filter(word => containsOnlyCJK(word));
   var blankIndex = Math.floor(Math.random() * sentenceWords.length);
   var blankWord = sentenceWords[blankIndex];
-  
-  sentence = replaceSentencePunctuation(sentence, ' ').replace(/\s+/g, ' ').trim();
+  console.log(/\u3000/.test(sentence))
+  sentence = replaceSentencePunctuation(sentence, ' ').replace(/ +/g, ' ').trim();
+  console.log(/\u3000/.test(sentence))
   const result = replaceRandomOccurrence(sentence, blankWord);
   sentence = result.newText;
   blankIndex = result.iblank;
-  sentenceElement.innerText = sentence;
+  sentenceElement.innerHTML = sentence;
   
   var wordsCopy = words.slice();
   var options = [blankWord];
@@ -143,22 +141,28 @@ function checkAnswer(selected, correct, corrIndex, optionDiv) {
 
     if (selected === correct) {
         optionDiv.style.backgroundColor = "#44b445";
-      } else {
-        optionDiv.style.backgroundColor = "red";
-        // Highlight the correct answer
-        document.getElementById("correct").style.backgroundColor = "#44b445";
+    } else {
+      optionDiv.style.backgroundColor = "red";
+      // Highlight the correct answer
+      document.getElementById("correct").style.backgroundColor = "#44b445";
+    }
+    var corr = document.getElementById("correct").innerHTML
+    sentence = lyrics[currentSentence]
+    // check if jp space in sentence
+    console.log(/\u3000/.test(sentence))
+    
+    var newString = "<span style='color:green'>" + corr + "</span>"
+    sentenceElement.innerHTML = replaceIthOccurrence(sentence, corr, corrIndex, newString);
+    
+    // Disable all options
+    var optionsDiv = document.getElementById("options");
+    for (var i = 0; i < optionsDiv.children.length; i++) {
+      optionsDiv.children[i].onclick = null;
       }
-        var corr = document.getElementById("correct").innerHTML
-        sentence = lyrics[currentSentence]
-        
-        var newString = "<span style='color:green'>" + corr + "</span>"
-        sentenceElement.innerHTML = replaceIthOccurrence(sentence, corr, corrIndex, newString);
-        
-      // Disable all options
-      var optionsDiv = document.getElementById("options");
-      for (var i = 0; i < optionsDiv.children.length; i++) {
-        optionsDiv.children[i].onclick = null;
-      }
+  }
+  function containsOnlyCJK(str) {
+    const regex = /^[\u3040-\u309F\u30A0-\u30FF\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF\uFF66-\uFF9F\u20000-\u2A6DF\u2A700-\u2B73F\u2B740-\u2B81F\u2B820-\u2CEAF\u2CEB0-\u2EBEF]*$/;
+    return regex.test(str);
   }
 
   function createWords() {
@@ -166,7 +170,7 @@ function checkAnswer(selected, correct, corrIndex, optionDiv) {
     var lyricsText = config.lang == 'ko' ? lyrics.join(' ') : wordLines.join(' ');
 
     // Split the lyrics text into words, removing any punctuation
-    var allWords = replacePunctuation(lyricsText, ' ').split(/\s+/).filter(word => word.length > 0);
+    var allWords = replacePunctuation(lyricsText, ' ').split(/\s+/).filter(word => containsOnlyCJK(word));
   
     // Create a Set to store unique words
     var uniqueWords = new Set(allWords);
