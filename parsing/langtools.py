@@ -285,12 +285,14 @@ def zh_txt_json(folder_path, title_ids):
             korean_lyrics = '\n'.join(line.strip() for line in newlines if len(line) and not re.search(r'[a-zA-Z]', line))
             if len(korean_lyrics.split('\n')) > len(lines) * .6:
                 lyrics = []
+                words = []
                 for l in korean_lyrics.split('\n'):
                     if len(l) > 0:
-                        l = ' '.join(jieba.cut(l))
-                        l = corr_punc(l)
-                        if '[' not in l and ']' not in l:
+                        lyric = ' '.join(jieba.cut(l))
+                        lyric = corr_punc(lyric)
+                        if '[' not in lyric and ']' not in lyric:
                             lyrics.append(l)
+                            words.append(lyric)
                 if title in title_ids:
                     id = title_ids[title]
                 else: id = None
@@ -299,6 +301,7 @@ def zh_txt_json(folder_path, title_ids):
                 json_data = {
                     "title": title,
                     "lyrics": lyrics,
+                    "words": words,
                     "video_id": id
                 }
 

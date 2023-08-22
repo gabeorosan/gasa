@@ -34,8 +34,24 @@ document.getElementById('title').addEventListener('click', function() {
   window.open(url, '_blank');
 });
 
-
 */
+function replaceIthOccurrence(str, oldSubstring, i, newSubstring) {
+  // print out the string, the substring to replace, the index of the occurrence to replace, and the new substring
+  console.log(str, oldSubstring, i, newSubstring)
+  let occurrenceCount = 0;
+  let index = 0;
+  console.log(str, oldSubstring, i, newSubstring)
+  while ((index = str.indexOf(oldSubstring, index)) !== -1) {
+    if (occurrenceCount === i) {
+      return str.substring(0, index) + newSubstring + str.substring(index + oldSubstring.length);
+    }
+    occurrenceCount++;
+    index += oldSubstring.length;
+  }
+
+  return str; // Return original string if the i-th occurrence is not found
+}
+
 function replaceRandomOccurrence(str, substring, replacement = '___') {
   const indices = [];
   let index = str.indexOf(substring);
@@ -47,23 +63,22 @@ function replaceRandomOccurrence(str, substring, replacement = '___') {
 
   if (indices.length === 0) return str;
 
-  const randomIndex = indices[Math.floor(Math.random() * indices.length)];
+  var iblank = Math.floor(Math.random() * indices.length)
+  const randomIndex = indices[iblank];
   const newText = str.substring(0, randomIndex) + replacement + str.substring(randomIndex + substring.length);
 
-  return { newText, randomIndex };
+  return { newText, iblank };
 }
 
-function replacePunctuation(str, replacement) {
-  // Regular expression matching Japanese punctuation characters
-  const regex = /[.,\/#!$?%\^&\*;:{}="'\-_`~()「」！？！!-\/:-@\\"'[\]-`{-~\u3000-\u303F\uFF00-\uFFEF\u2010\u2013\u2014\u2026\u30FB\u30FC\u3001\u3002\u3008-\u3011\u3014-\u301F\uFF01-\uFF60\uFF61-\uFF65、。〃〈〉《》「」『』【】〔〕〖〗〘〙〚〛〜〝〞〟]/g;
+function replaceSentencePunctuation(str, replacement) {
+  const regex = /[.,\/#!$?%\^&\*;:{}="'\-\u201C\u201D_`~()\s\u3000「」！？！!-\/:-@\\"'[\]-`{-~\u2010\u2013\u2014\u2026\uFF01-\uFF60\uFF61-\uFF65。〃〈〉《》「」『』【】〔〕〖〗〘〙〚〛〜〝〞〟]/g;
   return str.replace(regex, replacement);
 }
 
-function removePunctuation(str) {
-  // Regular expression matching Japanese punctuation characters
-  const regex = /[.,\/#!$?%\^&\*;:{}="'\-_`~()「」！？！!-\/:-@\\"'[\]-`{-~\u3000-\u303F\uFF00-\uFFEF\u2010\u2013\u2014\u2026\u30FB\u30FC\u3001\u3002\u3008-\u3011\u3014-\u301F\uFF01-\uFF60\uFF61-\uFF65、。〃〈〉《》「」『』【】〔〕〖〗〘〙〚〛〜〝〞〟]/g;
 
-  return str.replace(regex, '');
+function replacePunctuation(str, replacement) {
+  const regex = /[.,\/#!$?%\^&\*;:{}="'\-\u201C\u201D_`~()「」！？！!-\/:-@\\"'[\]-`{-~\u3000-\u303F\uFF00-\uFFEF\u2010\u2013\u2014\u2026\u30FB\u3001\u3002\u3008-\u3011\u3014-\u301F\uFF01-\uFF60\uFF61-\uFF65、。〃〈〉《》「」『』【】〔〕〖〗〘〙〚〛〜〝〞〟]/g;
+  return str.replace(regex, replacement);
 }
 
 function nextQuestion() {
@@ -74,26 +89,18 @@ function nextQuestion() {
   }
 
   var sentence = lyrics[currentSentence];
-  var sentenceWords = config.lang == 'jp' ? wordLines[currentSentence] : sentence;
-  sentenceWords = replacePunctuation(sentenceWords, ' ').split(' ').filter(word => word.length > 0);
-  
+  var sentenceLine = config.lang == 'ko' ? sentence : wordLines[currentSentence];
+  var sentenceWords = replacePunctuation(sentenceLine, ' ').split(/\s+/)
   var blankIndex = Math.floor(Math.random() * sentenceWords.length);
   var blankWord = sentenceWords[blankIndex];
-  if (config.lang == 'jp') {
-    sentence = removePunctuation(sentence);
-    const result = replaceRandomOccurrence(sentence, blankWord);
-    sentence = result.newText;
-    blankIndex = result.randomIndex;
-  } else {
-    sentenceWords[blankIndex] = "_____";
-    sentence = sentenceWords.join(" ");
-  }
-    // set the innerText of the sentence element to the new sentence
-  sentenceElement.innerText = config.lang == 'zh' ? sentence.replace(/\s|\u3000/g, '') : sentence;
+  
+  sentence = replaceSentencePunctuation(sentence, ' ').replace(/\s+/g, ' ').trim();
+  const result = replaceRandomOccurrence(sentence, blankWord);
+  sentence = result.newText;
+  blankIndex = result.iblank;
+  sentenceElement.innerText = sentence;
   
   var wordsCopy = words.slice();
-  
-  // Create options
   var options = [blankWord];
   while (options.length < 4) {
     var randomWord = wordsCopy.splice(Math.floor(Math.random() * wordsCopy.length), 1)[0];
@@ -145,20 +152,7 @@ function checkAnswer(selected, correct, corrIndex, optionDiv) {
         sentence = lyrics[currentSentence]
         
         var newString = "<span style='color:green'>" + corr + "</span>"
-        
-        // Replace the blank with the correct answer in green
-          
-          // filter out spaces
-          sentenceList = replacePunctuation(sentence, ' ').split(' ').filter(word => word.length > 0)
-          if (config.lang == 'zh') {
-            sentenceList = sentenceList.map(s => s.replace(/\s|\u3000/g, ''));
-          }
-          if (config.lang == 'jp') {
-            sentenceElement.innerHTML = replaceIndex(sentence, corrIndex, corr, newString);
-          } else {
-            sentenceList[corrIndex] = "<span style='color:green'>" + corr + "</span>"
-            sentenceElement.innerHTML = sentenceList.join(" ");
-          }
+        sentenceElement.innerHTML = replaceIthOccurrence(sentence, corr, corrIndex, newString);
         
       // Disable all options
       var optionsDiv = document.getElementById("options");
@@ -169,7 +163,7 @@ function checkAnswer(selected, correct, corrIndex, optionDiv) {
 
   function createWords() {
     //join together all the lyrics into one big string
-    var lyricsText = config.lang == 'jp' ? wordLines.join(' ') : lyrics.join(' ');
+    var lyricsText = config.lang == 'ko' ? lyrics.join(' ') : wordLines.join(' ');
 
     // Split the lyrics text into words, removing any punctuation
     var allWords = replacePunctuation(lyricsText, ' ').split(/\s+/).filter(word => word.length > 0);
@@ -212,9 +206,9 @@ function newSong() {
   .then((response) => response.json())
   .then((data) => {
     lyrics = data.lyrics;
-    if (config.lang == 'jp') {
+    if (config.lang !== 'ko') {
       wordLines = data.words;
-    }
+    } 
     videoId = data.video_id;
     player.loadVideoById(videoId);
     /*
