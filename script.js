@@ -1,7 +1,7 @@
 var n_songs;  
 var n;
 var lyricsFile;
-var lyrics, currentSentence, words
+var lyrics, currentSentence, words, wordLines
 const sentenceElement = document.getElementById("sentence");
 const playScreen = document.getElementById("playScreen");
 
@@ -33,10 +33,35 @@ document.getElementById('title').addEventListener('click', function() {
   var url = "https://www.google.com/search?q=" + encodeURIComponent(this.innerText + ' lyrics');
   window.open(url, '_blank');
 });
+
+
 */
+function replaceRandomOccurrence(str, substring, replacement = '___') {
+  const indices = [];
+  let index = str.indexOf(substring);
+  
+  while (index !== -1) {
+    indices.push(index);
+    index = str.indexOf(substring, index + 1);
+  }
+
+  if (indices.length === 0) return str;
+
+  const randomIndex = indices[Math.floor(Math.random() * indices.length)];
+  const newText = str.substring(0, randomIndex) + replacement + str.substring(randomIndex + substring.length);
+
+  return { newText, randomIndex };
+}
+
+function replacePunctuation(str, replacement) {
+  // Regular expression matching Japanese punctuation characters
+  const regex = /[.,\/#!$?%\^&\*;:{}="'\-_`~()「」！？！!-\/:-@\\"'[\]-`{-~\u3000-\u303F\uFF00-\uFFEF\u2010\u2013\u2014\u2026\u30FB\u30FC\u3001\u3002\u3008-\u3011\u3014-\u301F\uFF01-\uFF60\uFF61-\uFF65、。〃〈〉《》「」『』【】〔〕〖〗〘〙〚〛〜〝〞〟]/g;
+  return str.replace(regex, replacement);
+}
+
 function removePunctuation(str) {
   // Regular expression matching Japanese punctuation characters
-  const regex = /[.,\/#!$?%\^&\*;:{}="'\-_`~()「」！？!-\/:-@\\"'[\]-`{-~\u3000-\u303F\uFF00-\uFFEF\u2010\u2013\u2014\u2026\u30FB\u30FC\u3001\u3002\u3008-\u3011\u3014-\u301F\uFF01-\uFF60\uFF61-\uFF65、。〃〈〉《》「」『』【】〔〕〖〗〘〙〚〛〜〝〞〟]/g;
+  const regex = /[.,\/#!$?%\^&\*;:{}="'\-_`~()「」！？！!-\/:-@\\"'[\]-`{-~\u3000-\u303F\uFF00-\uFFEF\u2010\u2013\u2014\u2026\u30FB\u30FC\u3001\u3002\u3008-\u3011\u3014-\u301F\uFF01-\uFF60\uFF61-\uFF65、。〃〈〉《》「」『』【】〔〕〖〗〘〙〚〛〜〝〞〟]/g;
 
   return str.replace(regex, '');
 }
@@ -47,17 +72,25 @@ function nextQuestion() {
   } else {
     currentSentence++;
   }
-  var sentence = lyrics[currentSentence];
-  var sentenceWords = sentence.split(" ");
-  //remove punctuation
-  sentenceWords = sentenceWords.map(word => removePunctuation(word));
 
+  var sentence = lyrics[currentSentence];
+  var sentenceWords = config.lang == 'jp' ? wordLines[currentSentence] : sentence;
+  console.log(sentenceWords);
+  sentenceWords = replacePunctuation(sentenceWords, ' ').split(/\s+/).filter(word => word.length > 0);
+  console.log(sentenceWords);
+  
   var blankIndex = Math.floor(Math.random() * sentenceWords.length);
   var blankWord = sentenceWords[blankIndex];
-  sentenceWords[blankIndex] = "_____";
-  sentence = sentenceWords.join(" ");
-
-  // set the innerText of the sentence element to the new sentence
+  if (config.lang == 'jp') {
+    sentence = removePunctuation(sentence);
+    const result = replaceRandomOccurrence(sentence, blankWord);
+    sentence = result.newText;
+    blankIndex = result.randomIndex;
+  } else {
+    sentenceWords[blankIndex] = "_____";
+    sentence = sentenceWords.join(" ");
+  }
+    // set the innerText of the sentence element to the new sentence
   sentenceElement.innerText = sentence;
   
   var wordsCopy = words.slice();
@@ -91,7 +124,20 @@ function previousQuestion() {
   nextQuestion();
 }
 
+function replaceOccurrence(str, substring, i, replacement) {
+  let occurrenceCount = 0;
+  let index = 0;
 
+  while ((index = str.indexOf(substring, index)) !== -1) {
+    occurrenceCount++;
+    if (occurrenceCount === i) {
+      return str.substring(0, index) + replacement + str.substring(index + substring.length);
+    }
+    index += substring.length; // Move past the current occurrence to find the next one
+  }
+
+  return str; // Return original string if the i-th occurrence is not found
+}
 
 function checkAnswer(selected, correct, corrIndex, optionDiv) {
 
@@ -103,13 +149,16 @@ function checkAnswer(selected, correct, corrIndex, optionDiv) {
         document.getElementById("correct").style.backgroundColor = "#44b445";
       }
         var corr = document.getElementById("correct").innerHTML
-  
-        // Replace the blank with the correct answer in green
         sentence = lyrics[currentSentence]
-        sentenceList = sentence.split(" ")
-        sentenceList[corrIndex] = "<span style='color:green'>" + corr + "</span>";
-        sentenceElement.innerHTML = sentenceList.join(" ")
-
+        var newString = "<span style='color:green'>" + corr + "</span>"
+        if (config.lang == 'jp') {
+          sentenceElement.innerHTML = replaceOccurrence(sentence, corr, corrIndex, newString)
+        } else {
+        // Replace the blank with the correct answer in green
+          sentenceList = replacePunctuation(sentenceWords, ' ').split(/\s+/).filter(word => word.length > 0)
+          sentenceList[corrIndex] = newString;
+          sentenceElement.innerHTML = sentenceList.join(" ");
+        }
       // Disable all options
       var optionsDiv = document.getElementById("options");
       for (var i = 0; i < optionsDiv.children.length; i++) {
@@ -119,10 +168,10 @@ function checkAnswer(selected, correct, corrIndex, optionDiv) {
 
   function createWords() {
     //join together all the lyrics into one big string
-    var lyricsText = lyrics.join(' ');
+    var lyricsText = config.lang == 'jp' ? wordLines.join(' ') : lyrics.join(' ');
 
     // Split the lyrics text into words, removing any punctuation
-    var allWords = removePunctuation(lyricsText).split(/\s+/);
+    var allWords = replacePunctuation(lyricsText, ' ').split(/\s+/).filter(word => word.length > 0);
   
     // Create a Set to store unique words
     var uniqueWords = new Set(allWords);
@@ -162,7 +211,9 @@ function newSong() {
   .then((response) => response.json())
   .then((data) => {
     lyrics = data.lyrics;
-    
+    if (config.lang == 'jp') {
+      wordLines = data.words;
+    }
     videoId = data.video_id;
     player.loadVideoById(videoId);
     /*

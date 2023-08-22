@@ -67,7 +67,6 @@ def jp_txt_json(folder_path, title_ids):
     import re
     import os
     import regex
-    import jieba
     import json
     i = 0
     missing_ids = []
@@ -82,8 +81,6 @@ def jp_txt_json(folder_path, title_ids):
             title = corr_punc(lines[0])
             # remove english from the last line
             lyrics = lines[1:]
-            lyrics[0] = regex.split(r'[a-zA-Z]', lyrics[0])[-1]
-            lyrics[-1] = regex.split(r'[a-zA-Z]', lyrics[-1])[0]
             korean_lyrics = '\n'.join(lyrics)
             korean_lyrics = korean_lyrics.strip().replace('\n\n', '\n')
             
@@ -91,7 +88,8 @@ def jp_txt_json(folder_path, title_ids):
             for line in lyrics:
                 if re.search(r'[a-zA-Z]', line):
                     if not re.search(r'[a-zA-Z]', regex.split(r'[a-zA-Z]', line)[-1]) and bool(re.search(r'[\u3040-\u309F\u4E00-\u9FFF]', regex.split(r'[a-zA-Z]', line)[-1])):
-                        newlines.append(regex.split(r'[a-zA-Z]', line)[-1])
+                        if (lyrics.index(line) != 0 or '歌詞' not in line):
+                            newlines.append(regex.split(r'[a-zA-Z]', line)[-1])
                     elif not re.search(r'[a-zA-Z]', regex.split(r'[a-zA-Z]', line)[0]) and bool(re.search(r'[\u3040-\u309F\u4E00-\u9FFF]', regex.split(r'[a-zA-Z]', line)[0])):
                         newlines.append(regex.split(r'[a-zA-Z]', line)[0])
                     else: newlines.append('')
