@@ -75,9 +75,7 @@ function nextQuestion() {
 
   var sentence = lyrics[currentSentence];
   var sentenceWords = config.lang == 'jp' ? wordLines[currentSentence] : sentence;
-  console.log(sentenceWords);
-  sentenceWords = replacePunctuation(sentenceWords, ' ').split(/\s+/).filter(word => word.length > 0);
-  console.log(sentenceWords);
+  sentenceWords = replacePunctuation(sentenceWords, ' ').split(' ').filter(word => word.length > 0);
   
   var blankIndex = Math.floor(Math.random() * sentenceWords.length);
   var blankWord = sentenceWords[blankIndex];
@@ -91,7 +89,7 @@ function nextQuestion() {
     sentence = sentenceWords.join(" ");
   }
     // set the innerText of the sentence element to the new sentence
-  sentenceElement.innerText = sentence;
+  sentenceElement.innerText = config.lang == 'zh' ? sentence.replace(/\s|\u3000/g, '') : sentence;
   
   var wordsCopy = words.slice();
   
@@ -124,19 +122,14 @@ function previousQuestion() {
   nextQuestion();
 }
 
-function replaceOccurrence(str, substring, i, replacement) {
-  let occurrenceCount = 0;
-  let index = 0;
-
-  while ((index = str.indexOf(substring, index)) !== -1) {
-    occurrenceCount++;
-    if (occurrenceCount === i) {
-      return str.substring(0, index) + replacement + str.substring(index + substring.length);
-    }
-    index += substring.length; // Move past the current occurrence to find the next one
+function replaceIndex(str, index, oldSubstring, newSubstring) {
+  // Check if the substring exists at the specified index
+  if (str.substr(index, oldSubstring.length) === oldSubstring) {
+    // Concatenate the parts of the string before the index, the new substring, and after the old substring
+    return str.substr(0, index) + newSubstring + str.substr(index + oldSubstring.length);
   }
-
-  return str; // Return original string if the i-th occurrence is not found
+  // Return the original string if the old substring is not found at the specified index
+  return str;
 }
 
 function checkAnswer(selected, correct, corrIndex, optionDiv) {
@@ -150,15 +143,23 @@ function checkAnswer(selected, correct, corrIndex, optionDiv) {
       }
         var corr = document.getElementById("correct").innerHTML
         sentence = lyrics[currentSentence]
+        
         var newString = "<span style='color:green'>" + corr + "</span>"
-        if (config.lang == 'jp') {
-          sentenceElement.innerHTML = replaceOccurrence(sentence, corr, corrIndex, newString)
-        } else {
+        
         // Replace the blank with the correct answer in green
-          sentenceList = replacePunctuation(sentenceWords, ' ').split(/\s+/).filter(word => word.length > 0)
-          sentenceList[corrIndex] = newString;
-          sentenceElement.innerHTML = sentenceList.join(" ");
-        }
+          
+          // filter out spaces
+          sentenceList = replacePunctuation(sentence, ' ').split(' ').filter(word => word.length > 0)
+          if (config.lang == 'zh') {
+            sentenceList = sentenceList.map(s => s.replace(/\s|\u3000/g, ''));
+          }
+          if (config.lang == 'jp') {
+            sentenceElement.innerHTML = replaceIndex(sentence, corrIndex, corr, newString);
+          } else {
+            sentenceList[corrIndex] = "<span style='color:green'>" + corr + "</span>"
+            sentenceElement.innerHTML = sentenceList.join(" ");
+          }
+        
       // Disable all options
       var optionsDiv = document.getElementById("options");
       for (var i = 0; i < optionsDiv.children.length; i++) {
