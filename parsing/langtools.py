@@ -97,7 +97,6 @@ def jp_txt_json(folder_path, title_ids):
                     else: newlines.append('')
                 else:
                     newlines.append(line)
-                    
             korean_lyrics = '\n'.join(line.strip() for line in newlines if len(line) and not re.search(r'[a-zA-Z]', line))
             if len(korean_lyrics.split('\n')) > len(lines) * .6 and len(korean_lyrics.split('\n')) > 10:
                 lyrics = []
@@ -240,17 +239,17 @@ def ko_txt_json(folder_path, title_ids):
                 }
 
                 # Write the JSON object to a JSON file
-                json_file_path = os.path.join(folder_path, f"{i}.json")
+                json_file_path = f'{folder_path}/{i}.json'
                 with open(json_file_path, 'w', encoding='utf-8') as json_file:
                     json.dump(json_data, json_file, ensure_ascii=False, indent=2)
                 
-            i += 1
+                i += 1
     print("Missing ids: " + str(missing_ids))
     print("Total videos: " + str(i))
     return missing_ids
 
 
-def txt_json(folder_path, title_ids):
+def zh_txt_json(folder_path, title_ids):
     import re
     import os
     import regex
@@ -294,8 +293,6 @@ def txt_json(folder_path, title_ids):
                         l = corr_punc(l)
                         if '[' not in l and ']' not in l:
                             lyrics.append(l)
-                            p = to_pinyin(l)
-                            lyrics.append(p)
                 if title in title_ids:
                     id = title_ids[title]
                 else: id = None
@@ -320,14 +317,14 @@ def update_missing(title_ids, missing_ids):
     from googleapiclient.discovery import build
     import json
     import os
-    from tokens import api_key1, api_key2, api_key3, api_key4
+    from tokens import api_key1, api_key2, api_key3, api_key4, api_key5
     i = 0
-    youtube = build("youtube", "v3", developerKey=api_key4)
+    youtube = build("youtube", "v3", developerKey=api_key5)
 
     for id in missing_ids:
         i+=1
         if i == 100:
-            youtube = build("youtube", "v3", developerKey=api_key2)
+            youtube = build("youtube", "v3", developerKey=api_key4)
         elif i == 200:
             youtube = build("youtube", "v3", developerKey=api_key3)
         # Assuming the song title is the first line in the "lyrics" field

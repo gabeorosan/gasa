@@ -1,7 +1,7 @@
 const kuromoji = require('kuromoji');
 const fs = require('fs');
 
-n_songs = 218;
+n_songs = 108;
 
 function normalizeSpaces(str) {
     return str.replace(/[\s\u3000]+/g, ' ').trim();
@@ -34,11 +34,9 @@ kuromoji.builder({ dicPath: 'node_modules/kuromoji/dict' }).build((err, tokenize
           const readings = tokens.map(token => token.reading || token.surface_form).join(' ');
 
           const normalizedSurfaceForms = normalizeSpaces(surfaceForms).replace(/\s+/g, ' ').trim();
-          const normalizedReadings = normalizeSpaces(readings).replace(/\s+/g, ' ').trim();
 
           // Add the original line and its hiragana reading as unique items
           processedLyrics.push(normalizedSurfaceForms);
-          processedLyrics.push(normalizedReadings);
         }
 
         // Update the JSON data and save back to the file

@@ -3,7 +3,6 @@ var n;
 var lyricsFile;
 var lyrics, currentSentence, words
 const sentenceElement = document.getElementById("sentence");
-const pinyinElement = document.getElementById("pinyin");
 const playScreen = document.getElementById("playScreen");
 
 const config = {
@@ -18,15 +17,7 @@ function setPlayerHeight(newHeight) {
 function changeLanguage(langCode) {
   config.lang = langCode;
   console.log(`Language changed to ${langCode}`);
-  pinyinElement.style.display = config.lang === 'ko' ? 'none' : 'block';
   newSong();
-  if (langCode === 'ko') {
-    document.body.style.fontSize = '30px';
-    setPlayerHeight(360);
-  } else {
-    document.body.style.fontSize = '24px';
-    setPlayerHeight(320);
-  }
 }
 
 // Attach click event listeners to the buttons
@@ -59,7 +50,7 @@ function nextQuestion() {
   var sentence = lyrics[currentSentence];
   var sentenceWords = sentence.split(" ");
   //remove punctuation
-  sentenceWords = sentenceWords.map(word => word.replace(/[.,!?;:-]/g, ''));
+  sentenceWords = sentenceWords.map(word => removePunctuation(word));
 
   var blankIndex = Math.floor(Math.random() * sentenceWords.length);
   var blankWord = sentenceWords[blankIndex];
@@ -69,14 +60,6 @@ function nextQuestion() {
   // set the innerText of the sentence element to the new sentence
   sentenceElement.innerText = sentence;
   
-  if (config.lang !== 'ko') {
-    pinyinLine = pinyin[currentSentence];
-    pinWords = pinyinLine.split(" ");
-    pinyinWords = pinWords.map(word => removePunctuation(word));
-    pinyinWords[blankIndex] = "_____";
-    pinyinLine = pinyinWords.join(" ");
-    pinyinElement.innerText = pinyinLine;
-  }
   var wordsCopy = words.slice();
   
   // Create options
@@ -127,12 +110,6 @@ function checkAnswer(selected, correct, corrIndex, optionDiv) {
         sentenceList[corrIndex] = "<span style='color:green'>" + corr + "</span>";
         sentenceElement.innerHTML = sentenceList.join(" ")
 
-        if (config.lang !== 'ko') {
-          pinyinLine = pinyin[currentSentence]
-          pinyinList = pinyinLine.split(" ")
-          pinyinList[corrIndex] = "<span style='color:green'>" + pinyinList[corrIndex] + "</span>";
-          pinyinElement.innerHTML = pinyinList.join(" ")
-        }
       // Disable all options
       var optionsDiv = document.getElementById("options");
       for (var i = 0; i < optionsDiv.children.length; i++) {
@@ -159,7 +136,7 @@ var player;
 function onYouTubeIframeAPIReady() {
 
   player = new YT.Player('player', {
-    height: '320',
+    height: '360',
     width: '640',
     events: {
       'onReady': onPlayerReady
@@ -172,18 +149,19 @@ function onPlayerReady() {
 }
 
 function newSong() {
-  n_songs = config.lang == 'zh' ? 16 : 218, 
+  if (config.lang == 'zh') {
+    n_songs = 126;
+  } else if (config.lang == 'jp') {
+    n_songs = 108;
+  } else {
+    n_songs = 234;
+  }
   n = Math.floor(Math.random() * n_songs);
   lyricsFile = 'lyrics/' + config.lang + '/' +  n + '.json';
   fetch(lyricsFile)
   .then((response) => response.json())
   .then((data) => {
-    if (config.lang == 'ko') {
-      lyrics = data.lyrics;
-    } else {
-      lyrics = data.lyrics.filter((_, index) => index % 2 === 0);
-      pinyin = data.lyrics.filter((_, index) => index % 2 === 1);
-    }
+    lyrics = data.lyrics;
     
     videoId = data.video_id;
     player.loadVideoById(videoId);
