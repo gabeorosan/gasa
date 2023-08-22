@@ -36,7 +36,7 @@ document.getElementById('title').addEventListener('click', function() {
 */
 function removePunctuation(str) {
   // Regular expression matching Japanese punctuation characters
-  const regex = /[.,\/#!$?%\^&\*;:{}="'\-_`~()「」!-\/:-@\\"'[\]-`{-~\u3000-\u303F\uFF00-\uFFEF\u2010\u2013\u2014\u2026\u30FB\u30FC\u3001\u3002、]/g;
+  const regex = /[.,\/#!$?%\^&\*;:{}="'\-_`~()「」！？!-\/:-@\\"'[\]-`{-~\u3000-\u303F\uFF00-\uFFEF\u2010\u2013\u2014\u2026\u30FB\u30FC\u3001\u3002\u3008-\u3011\u3014-\u301F\uFF01-\uFF60\uFF61-\uFF65、。〃〈〉《》「」『』【】〔〕〖〗〘〙〚〛〜〝〞〟]/g;
 
   return str.replace(regex, '');
 }
