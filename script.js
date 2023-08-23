@@ -67,11 +67,6 @@ function replaceRandomOccurrence(str, substring, replacement = '___') {
   return { newText, iblank };
 }
 
-function replaceSentencePunctuation(str, replacement) {
-  const regex = /["'(){}[\]「」『』【】〔〕〈〉《》〖〗〘〙〚〛\u201C\u201D〝〞〃]/g;
-  return str.replace(regex, replacement);
-}
-
 
 function replacePunctuation(str, replacement) {
   const regex = /[.,\/#!$?%\^&\*;:{}="'\-\u201C\u201D_`~()「」！？！!-\/:-@\\"'[\]-`{-~\u3000-\u303F\uFF00-\uFFEF\u2010\u2013\u2014\u2026\u30FB\u3001\u3002\u3008-\u3011\u3014-\u301F\uFF01-\uFF60\uFF61-\uFF65、。〃〈〉《》「」『』【】〔〕〖〗〘〙〚〛〜〝〞〟]/g;
@@ -90,9 +85,6 @@ function nextQuestion() {
   var sentenceWords = replacePunctuation(sentenceLine, ' ').split(/\s+/).filter(word => containsOnlyCJK(word));
   var blankIndex = Math.floor(Math.random() * sentenceWords.length);
   var blankWord = sentenceWords[blankIndex];
-  console.log(/\u3000/.test(sentence))
-  sentence = replaceSentencePunctuation(sentence, ' ').replace(/ +/g, ' ').trim();
-  console.log(/\u3000/.test(sentence))
   const result = replaceRandomOccurrence(sentence, blankWord);
   sentence = result.newText;
   blankIndex = result.iblank;
@@ -149,7 +141,6 @@ function checkAnswer(selected, correct, corrIndex, optionDiv) {
     var corr = document.getElementById("correct").innerHTML
     sentence = lyrics[currentSentence]
     // check if jp space in sentence
-    console.log(/\u3000/.test(sentence))
     
     var newString = "<span style='color:green'>" + corr + "</span>"
     sentenceElement.innerHTML = replaceIthOccurrence(sentence, corr, corrIndex, newString);
@@ -184,8 +175,8 @@ var player;
 function onYouTubeIframeAPIReady() {
 
   player = new YT.Player('player', {
-    height: '360',
-    width: '640',
+    height: '450',
+    width: '800',
     events: {
       'onReady': onPlayerReady
     }

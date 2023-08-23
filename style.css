@@ -2,6 +2,7 @@ body {
     font-family: Arial, sans-serif;
     font-size: 30px;
     text-align: center;
+    margin: 0px
 }
 
 button {
@@ -10,8 +11,8 @@ button {
     cursor: pointer;
 }
 .navbar {
+
     background-color: #f0f0f0;
-    padding: 0px;
 }
 .navbar button {
     font-size: 24px;
