@@ -159,16 +159,50 @@ function loadSavedSongs() {
     return result;
   }
 
+  function sortBlankedWords(blankWords, occurrenceIndices) {
+    // Split the sentence into words
+    sentence = lyrics[currentSentence];
+    const words = sentence.split(' ');
+  
+    // Create an array to store the sorted blank words
+    let sortedBlankWords = [];
+  
+    // Create a copy of occurrenceIndices to track the occurrence index of each blank word
+    let occurrenceIndicesCopy = [...occurrenceIndices];
+  
+    // Iterate through the sentence's words
+    words.forEach(word => {
+      // Find the index of the word in the blankWords array
+      const index = blankWords.findIndex((blankWord, i) => word === blankWord && occurrenceIndicesCopy[i] === 0);
+  
+      // If the word is found in blankWords, update the sorted array and occurrence index
+      if (index !== -1) {
+        sortedBlankWords.push(blankWords[index]);
+        occurrenceIndicesCopy[index]++; // Increment the occurrence index for the next match
+      }
+    });
+  
+    return sortedBlankWords;
+  }
 
   function sortBlankedWords(bWords, iValues) {
+    for (var i = 0; i < bWords.length; i++) {
+      for (var j = i + 1; j < bWords.length; j++) {
+        if (bWords[i] === bWords[j] && iValues[i] <= iValues[j]) {
+          iValues[j]++;
+        }
+      }
+    }
     sentence = lyrics[currentSentence];
     // Create an array of objects representing the blanked words and their original positions
+    console.log(bWords, iValues)
     var blanks = bWords.map((word, index) => {
       var occurrence = iValues[index];
       var position = -1;
       for (var i = 0; i <= occurrence; i++) {
         position = sentence.indexOf(word, position + 1);
       }
+      console.log(position);
       return { word, position };
     });
   
