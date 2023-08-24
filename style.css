@@ -55,3 +55,78 @@ button {
     border: 1px solid #ccc;
     cursor: pointer;
 }
+
+#sidebar {
+    position: fixed;
+    right: 0;
+    top: 0;
+    width: 40px;
+    height: 100%;
+    background-color: #f1f1f1;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  #saveSongButton {
+    cursor: pointer;
+    color: black; /* Initial color */
+  }
+  
+  #saveSongButton.clicked {
+    color: white; /* Color when pressed */
+    animation: fadeToBlack 1.2s forwards;
+  }
+
+  @keyframes fadeToBlack {
+    0% { color: white; }
+    100% { color: black; }
+  }
+  
+  .fas {
+    font-size: 24px;
+    padding: 10px;
+  }
+  
+  #playScreen{
+    display: none;
+  }
+
+  #scrollingContainer {
+    height: 200px; /* Adjust the height to your preference */
+    overflow-y: scroll;
+    border: 1px solid #ccc;
+    transition: height 0.3s ease;
+  }
+  #scrollingContainer.collapsed {
+    height: 50px; /* Height of a single song button */
+    overflow-y: hidden;
+    transition: height 0.3s ease; /* Smooth transition effect */
+  }
+  
+  #savedSongsList {
+    padding: 0;
+    margin: 0;
+  }
+  
+  #savedSongsList li {
+    list-style-type: none;
+    padding: 5px 10px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    margin: 0; /* Remove margin */
+    cursor: pointer;
+    text-align: center;
+    width: 100%; /* Full width */
+    box-sizing: border-box; /* Include padding and border in width */
+    display: flex; /* Flex layout to fill height */
+    align-items: center; /* Center content vertically */
+    justify-content: center; /* Center content horizontally */
+    height: 50px; /* Fixed height for each button, adjust as needed */
+  }
+  
+  #savedSongsList li:hover {
+    background-color: #e0e0e0;
+  }
+  

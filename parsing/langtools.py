@@ -81,6 +81,8 @@ def jp_txt_json(folder_path, title_ids):
             title = corr_punc(lines[0])
             # remove english from the last line
             lyrics = lines[1:]
+            lyrics[-1] = regex.split(r'[a-zA-Z]', lyrics[-1])[0]
+            lyrics[-1] = lyrics[-1][:-1] if lyrics[-1] and lyrics[-1][-1].isdigit() else lyrics[-1]
             korean_lyrics = '\n'.join(lyrics)
             korean_lyrics = korean_lyrics.strip().replace('\n\n', '\n')
             
@@ -207,7 +209,8 @@ def ko_txt_json(folder_path, title_ids):
             # remove english from the last line
             lyrics = lyrics.split('\n')
             lyrics[0] = regex.split(r'[a-zA-Z]+|[ぁ-んァ-ン一-龥]|\p{P}', lyrics[0])[-1]
-            lyrics[-1] = regex.split(r'[a-zA-Z]+|[ぁ-んァ-ン一-龥]|\p{P}', lyrics[-1])[0]
+            lyrics[-1] = regex.split(r'[a-zA-Z]', lyrics[-1])[0]
+            lyrics[-1] = lyrics[-1][:-1] if lyrics[-1] and lyrics[-1][-1].isdigit() else lyrics[-1]
             korean_lyrics = '\n'.join(lyrics)
             korean_lyrics = korean_lyrics.strip().replace('\n\n', '\n')
             
@@ -268,6 +271,7 @@ def zh_txt_json(folder_path, title_ids):
             lyrics = lines[1:]
             lyrics[0] = regex.split(r'[a-zA-Z]', lyrics[0])[-1]
             lyrics[-1] = regex.split(r'[a-zA-Z]', lyrics[-1])[0]
+            lyrics[-1] = lyrics[-1][:-1] if lyrics[-1] and lyrics[-1][-1].isdigit() else lyrics[-1]
             korean_lyrics = '\n'.join(lyrics)
             korean_lyrics = korean_lyrics.strip().replace('\n\n', '\n')
             

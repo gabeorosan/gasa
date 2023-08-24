@@ -1,0 +1,79 @@
+body {
+    font-family: Arial, sans-serif;
+    font-size: 30px;
+    text-align: center;
+    margin: 0px
+}
+
+button {
+    padding: 5px 20px;
+    margin: 10px;
+    cursor: pointer;
+}
+.navbar {
+
+    background-color: #f0f0f0;
+}
+.navbar button {
+    font-size: 24px;
+    border: none;
+}
+.navbar a:hover {
+    text-decoration: underline;
+}
+p {
+    margin: 20px;
+}
+input[type="text"] {
+    padding: 10px;
+    margin: 10px;
+}
+#title {
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;    
+}
+  
+#player {
+    padding: 10px;
+}
+
+#options {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+button {
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+.option {
+    padding: 10px;
+    margin: 0px 10px 10px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+}
+
+
+
+
+  
+  #saveSongButton {
+    cursor: pointer;
+    color: black; /* Initial color */
+  }
+  
+  #saveSongButton.clicked {
+    color: white; /* Color when pressed */
+    animation: fadeToBlack 1.2s forwards;
+  }
+
+  @keyframes fadeToBlack {
+    0% { color: white; }
+    100% { color: black; }
+  }
+
+  
+  
